@@ -1,9 +1,8 @@
 package project.movie4you.movie;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Movie {
@@ -18,9 +17,11 @@ public class Movie {
     private int yearOfProduction;
     private String category;
     private String description;
-    private Award award;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "AwardMovie")
+    private List<Award> awards = new ArrayList<>();
 
-    public Movie(String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description) {
+    public Movie(String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description, List<Award> awards) {
         this.title = title;
         this.director = director;
         this.scriptwriter = scriptwriter;
@@ -29,6 +30,7 @@ public class Movie {
         this.yearOfProduction = yearOfProduction;
         this.category = category;
         this.description = description;
+        this.awards = awards;
     }
 
     public Movie() {
@@ -99,4 +101,7 @@ public class Movie {
         this.description = description;
     }
 
+    public List<Award> getAwards() {
+        return awards;
+    }
 }
