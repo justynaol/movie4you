@@ -18,7 +18,7 @@ public class Movie {
     private int yearOfProduction;
     private String category;
     private String description;
-    private boolean isAward; //TODO
+    private Award award;
 
     public Movie(String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description) {
         this.title = title;
