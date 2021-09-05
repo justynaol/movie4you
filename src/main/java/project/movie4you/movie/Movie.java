@@ -3,6 +3,7 @@ package project.movie4you.movie;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Movie {
@@ -103,5 +104,18 @@ public class Movie {
 
     public List<Award> getAwards() {
         return awards;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Movie movie = (Movie) o;
+        return id == movie.id && Float.compare(movie.price, price) == 0 && yearOfProduction == movie.yearOfProduction && Objects.equals(title, movie.title) && Objects.equals(director, movie.director) && Objects.equals(scriptwriter, movie.scriptwriter) && status == movie.status && Objects.equals(category, movie.category) && Objects.equals(description, movie.description) && Objects.equals(awards, movie.awards);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, director, scriptwriter, price, status, yearOfProduction, category, description, awards);
     }
 }
