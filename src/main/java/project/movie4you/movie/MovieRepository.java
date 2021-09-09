@@ -1,6 +1,9 @@
 package project.movie4you.movie;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface MovieRepository extends JpaRepository<Movie,String> {
+@Repository
+public interface MovieRepository extends JpaRepository<Movie,Long> {
+
 }

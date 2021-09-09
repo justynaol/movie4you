@@ -4,6 +4,9 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class Movie {
@@ -19,10 +22,11 @@ public class Movie {
     private String category;
     private String description;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "AwardMovie")
+    @JoinTable(name = "Award_Movie")
     private List<Award> awards = new ArrayList<>();
 
-    public Movie(String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description, List<Award> awards) {
+    public Movie(long id, String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description, List<Award> awards) {
+        this.id = id;
         this.title = title;
         this.director = director;
         this.scriptwriter = scriptwriter;
@@ -36,6 +40,14 @@ public class Movie {
 
     public Movie() {
 
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -117,5 +129,17 @@ public class Movie {
     @Override
     public int hashCode() {
         return Objects.hash(id, title, director, scriptwriter, price, status, yearOfProduction, category, description, awards);
+    }
+
+    public void update(String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description, List<Long> awards) {
+        this.title = title;
+        this.director = director;
+        this.scriptwriter = scriptwriter;
+        this.price = price;
+        this.status = status;
+        this.yearOfProduction = yearOfProduction;
+        this.category = category;
+        this.description = description;
+        this.awards = awards.stream().map(id -> new Award(id)).collect(toList());
     }
 }

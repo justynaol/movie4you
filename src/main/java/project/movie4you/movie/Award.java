@@ -16,14 +16,23 @@ public class Award {
     private String organizationName;
     private Date receivedDate;
 
-    public Award(String name, String organizationName, Date receivedDate) {
+    public Award(long id, String name, String organizationName, Date receivedDate) {
+        this.id = id;
         this.name = name;
         this.organizationName = organizationName;
         this.receivedDate = receivedDate;
     }
 
-    public Award() {
+    public Award(Long id) {
 
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
