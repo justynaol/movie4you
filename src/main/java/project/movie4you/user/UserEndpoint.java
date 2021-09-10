@@ -15,25 +15,32 @@ public class UserEndpoint {
         this.userRepository = userRepository;
     }
 
-   @PostMapping
+    @PostMapping
     public ResponseEntity<Void> register(@RequestBody UserDefinition userDefinition) {
         User user = new User(userDefinition.login, new PasswordEncoder().encode(userDefinition.password));
         userRepository.save(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-   @PutMapping("/{login}")
-   public ResponseEntity<Void> update(@PathVariable String login, @RequestBody UserDefinition userDefinition) {
-       User user = userRepository.getById(login);
-       user.update(userDefinition.password);
-       userRepository.save(user);
-       return new ResponseEntity<>(HttpStatus.OK);
-   }
+    @PutMapping("/{login}")
+    public ResponseEntity<Void> update(@PathVariable String login, @RequestBody UserDefinition userDefinition) {
+        User user = userRepository.getById(login);
+        user.update(userDefinition.password);
+        userRepository.save(user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{login}")
+    public ResponseEntity<Void> delete(@PathVariable String login) {
+        userRepository.deleteById(login);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     protected static class UserDefinition {
         String login;
         String password;
+
         public static UserDefinition from(User user) {
             UserDefinition userDefinition = new UserDefinition();
             userDefinition.login = user.getLogin();
