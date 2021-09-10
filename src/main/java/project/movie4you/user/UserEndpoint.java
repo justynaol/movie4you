@@ -3,10 +3,8 @@ package project.movie4you.user;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/user")
@@ -16,13 +14,22 @@ public class UserEndpoint {
     public UserEndpoint(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-   /* @PostMapping
+
+   @PostMapping
     public ResponseEntity<Void> register(@RequestBody UserDefinition userDefinition) {
-        User user = new User(userDefinition.login, passwordEncoder.encode(userDefinition.password));
+        User user = new User(userDefinition.login, new PasswordEncoder().encode(userDefinition.password));
         userRepository.save(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-*/
+
+   @PutMapping("/{login}")
+   public ResponseEntity<Void> update(@PathVariable String login, @RequestBody UserDefinition userDefinition) {
+       User user = userRepository.getById(login);
+       user.update(userDefinition.password);
+       userRepository.save(user);
+       return new ResponseEntity<>(HttpStatus.OK);
+   }
+
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     protected static class UserDefinition {
         String login;

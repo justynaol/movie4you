@@ -25,4 +25,8 @@ public class User {
     public String getPassword() {
         return password;
     }
+
+    public void update(String password) {
+        this.password = password;
+    }
 }
