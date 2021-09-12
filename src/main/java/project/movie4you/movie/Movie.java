@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 
 import static java.util.stream.Collectors.toList;
@@ -25,7 +26,7 @@ public class Movie {
     @JoinTable(name = "Award_Movie")
     private List<Award> awards = new ArrayList<>();
 
-    public Movie(long id, String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description, List<Award> awards) {
+    public Movie(long id, String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description) {
         this.id = id;
         this.title = title;
         this.director = director;
@@ -35,7 +36,6 @@ public class Movie {
         this.yearOfProduction = yearOfProduction;
         this.category = category;
         this.description = description;
-        this.awards = awards;
     }
 
     public Movie() {
@@ -46,72 +46,36 @@ public class Movie {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getDirector() {
         return director;
     }
 
-    public void setDirector(String director) {
-        this.director = director;
-    }
-
     public String getScriptwriter() {
         return scriptwriter;
-    }
-
-    public void setScriptwriter(String scriptwriter) {
-        this.scriptwriter = scriptwriter;
     }
 
     public float getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
     public Status getStatus() {
         return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     public int getYearOfProduction() {
         return yearOfProduction;
     }
 
-    public void setYearOfProduction(int yearOfProduction) {
-        this.yearOfProduction = yearOfProduction;
-    }
-
     public String getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public List<Award> getAwards() {
@@ -131,7 +95,7 @@ public class Movie {
         return Objects.hash(id, title, director, scriptwriter, price, status, yearOfProduction, category, description, awards);
     }
 
-    public void update(String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description, List<Long> awards) {
+    public void update(String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description, List<Award> awards) {
         this.title = title;
         this.director = director;
         this.scriptwriter = scriptwriter;
@@ -140,6 +104,15 @@ public class Movie {
         this.yearOfProduction = yearOfProduction;
         this.category = category;
         this.description = description;
-        this.awards = awards.stream().map(id -> new Award(id)).collect(toList());
+        this.awards = awards;
+    }
+
+    public void addAward(Award award) {
+        this.awards.add(award);
+    }
+
+    public void deleteById(long awardid) {
+
+        awards.removeIf(award -> awardid==award.getId());
     }
 }

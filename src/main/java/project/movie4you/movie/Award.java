@@ -16,14 +16,13 @@ public class Award {
     private String organizationName;
     private Date receivedDate;
 
-    public Award(long id, String name, String organizationName, Date receivedDate) {
-        this.id = id;
+    public Award(String name, String organizationName, Date receivedDate) {
         this.name = name;
         this.organizationName = organizationName;
         this.receivedDate = receivedDate;
     }
 
-    public Award(Long id) {
+    public Award() {
 
     }
 
@@ -31,32 +30,16 @@ public class Award {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getOrganizationName() {
         return organizationName;
     }
 
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
-    }
-
     public Date getReceivedDate() {
         return receivedDate;
-    }
-
-    public void setReceivedDate(Date receivedDate) {
-        this.receivedDate = receivedDate;
     }
 
     @Override

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.movie4you.movie.MovieEndpoint.MovieDefinition.AwardDefinition;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -30,10 +32,9 @@ public class MovieEndpoint {
 
    @PostMapping
     public ResponseEntity<Void> create(@RequestBody MovieDefinition movieDefinition) {
-        List<Award> awards = movieDefinition.awards.stream()
-                .map(id -> new Award(id))
-                .collect(toList());
-       Movie movie = new Movie(movieDefinition.id, movieDefinition.title, movieDefinition.director, movieDefinition.scriptwriter, movieDefinition.price, movieDefinition.status, movieDefinition.yearOfProduction, movieDefinition.category, movieDefinition.description, awards);
+       Movie movie = new Movie(movieDefinition.id, movieDefinition.title, movieDefinition.director, movieDefinition.scriptwriter,
+               movieDefinition.price, movieDefinition.status, movieDefinition.yearOfProduction, movieDefinition.category,
+               movieDefinition.description);
         movieRepository.save(movie);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -42,9 +43,37 @@ public class MovieEndpoint {
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable long id, @RequestBody MovieDefinition movieDefinition) {
         Movie movie = movieRepository.getById(id);
-        movie.update(movieDefinition.title, movieDefinition.director, movieDefinition.scriptwriter, movieDefinition.price, movieDefinition.status, movieDefinition.yearOfProduction, movieDefinition.category, movieDefinition.description, movieDefinition.awards);
+
+        List<Award> awards = new ArrayList<>();
+        for (AwardDefinition award : movieDefinition.awards) {
+            awards.add(new Award(award.name, award.organizationName, award.receivedDate));
+        }
+//        List<Award> awards = movieDefinition.awards
+//                .stream()
+//                .map(award -> new Award(award.name, award.organizationName, award.receivedDate))
+//                .collect(toList());
+
+        movie.update(movieDefinition.title, movieDefinition.director, movieDefinition.scriptwriter, movieDefinition.price,
+                movieDefinition.status, movieDefinition.yearOfProduction, movieDefinition.category,
+                movieDefinition.description, awards);
         movieRepository.save(movie);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/awards")
+    @Transactional
+    public ResponseEntity<Void> addAward(@PathVariable long id, @RequestBody AwardDefinition awardDefinition) {
+        Movie movie = movieRepository.getById(id);
+        movie.addAward(new Award(awardDefinition.name, awardDefinition.organizationName, awardDefinition.receivedDate));
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}/awards/{awardid}")
+    @Transactional
+    public ResponseEntity<Void> deleteAward(@PathVariable long awardid, @PathVariable long id) {
+        Movie movie = movieRepository.getById(id);
+        movie.deleteById(awardid);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
@@ -64,7 +93,7 @@ public class MovieEndpoint {
         int yearOfProduction;
         String category;
         String description;
-        List<Long> awards = new ArrayList<>();
+        List<AwardDefinition> awards = new ArrayList<>();
 
         public static MovieDefinition from(Movie movie) {
             MovieDefinition movieDefinition = new MovieDefinition();
@@ -77,8 +106,21 @@ public class MovieEndpoint {
             movieDefinition.yearOfProduction = movie.getYearOfProduction();
             movieDefinition.category = movie.getCategory();
             movieDefinition.description = movie.getDescription();
-            movieDefinition.awards = movie.getAwards().stream().map($ -> $.getId()).collect(toList());
+            movieDefinition.awards = movie.getAwards().stream().map($ -> new AwardDefinition($)).collect(toList());
             return movieDefinition;
+        }
+
+        @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+        public static class AwardDefinition {
+            String name;
+            String organizationName;
+            Date receivedDate;
+
+            public AwardDefinition(Award award) {
+                this.name = award.getName();
+                this.organizationName = award.getOrganizationName();
+                this.receivedDate = award.getReceivedDate();
+            }
         }
     }
 }
