@@ -1,5 +1,6 @@
 package project.movie4you.movie;
 
+
 import javax.persistence.*;
 
 @Entity
@@ -11,7 +12,7 @@ public class DVD {
     private Movie movie;
     private Status status;
 
-    public DVD( Movie movie, Status status) {
+    public DVD(Movie movie, Status status) {
         this.movie = movie;
         this.status = status;
     }

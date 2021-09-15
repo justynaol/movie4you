@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.movie4you.rental.Rental;
+import project.movie4you.rental.RentalRepository;
+import project.movie4you.user.User;
+import project.movie4you.user.UserRepository;
 
 import javax.transaction.Transactional;
-
 
 @RestController
 @RequestMapping("/dvd")
@@ -16,6 +19,10 @@ public class DVDEndpoint {
     private MovieRepository movieRepository;
     @Autowired
     private DVDRepository dvdRepository;
+    @Autowired
+    private RentalRepository rentalRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping
     ResponseEntity<Void> create(@RequestBody DVDDefinition dvdDefinition) {
@@ -26,11 +33,18 @@ public class DVDEndpoint {
     }
 
     @Transactional
-    @PutMapping("/{id}")
-    ResponseEntity<Void> update(@PathVariable long id, @RequestBody DVDDefinition dvdDefinition) {
+    @PutMapping("/{id}/user/{login}/rental/{rentalid}")
+    ResponseEntity<Void> update(@PathVariable long id, @PathVariable long rentalid, @PathVariable String login, @RequestBody DVDDefinition dvdDefinition) {
         DVD dvd = dvdRepository.getById(id);
         dvd.update(dvdDefinition.status);
         //todo zapisać kto wypożyczył / usunąć wypożyczającego jeśli oddał
+        if (dvdDefinition.status.equals("RENTED")) {
+            User user = userRepository.getById(login);
+            Rental rental = new Rental(user, dvd);
+            rentalRepository.save(rental);
+        } else {
+            rentalRepository.deleteById(rentalid);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -44,6 +58,5 @@ public class DVDEndpoint {
     private static class DVDDefinition {
         long movieid;
         Status status;
-
     }
 }
