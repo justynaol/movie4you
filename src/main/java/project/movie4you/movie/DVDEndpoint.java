@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import project.movie4you.rental.Rental;
 import project.movie4you.rental.RentalRepository;
@@ -11,6 +12,7 @@ import project.movie4you.user.User;
 import project.movie4you.user.UserRepository;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/dvd")
@@ -33,20 +35,24 @@ public class DVDEndpoint {
     }
 
     @Transactional
-    @PutMapping("/{id}/user/{login}/rental/{rentalid}")
-    ResponseEntity<Void> update(@PathVariable long id, @PathVariable long rentalid, @PathVariable String login, @RequestBody DVDDefinition dvdDefinition) {
+    @PostMapping("/{id}/rent")
+    ResponseEntity<Void> rent(@PathVariable long id){
         DVD dvd = dvdRepository.getById(id);
-        dvd.update(dvdDefinition.status);
-        //todo zapisać kto wypożyczył / usunąć wypożyczającego jeśli oddał
-        if (dvdDefinition.status.equals("RENTED")) {
-            User user = userRepository.getById(login);
-            Rental rental = new Rental(user, dvd);
-            rentalRepository.save(rental);
-        } else {
-            rentalRepository.deleteById(rentalid);
-        }
+        dvd.update(Status.RENTED);
+        User user = userRepository.getById(SecurityContextHolder.getContext().getAuthentication().getName());
+        Rental rental = new Rental(user, dvd, new Date());
+        rentalRepository.save(rental);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    //data oddania
+    @Transactional
+    @PostMapping("/{id}/return")
+    ResponseEntity<Void> returndvd(@PathVariable long id){
+        DVD dvd = dvdRepository.getById(id);
+        dvd.update(Status.AVAILABLE);
+        return new ResponseEntity<>(HttpStatus.OK);
+        }
 
     @DeleteMapping("/{id}")
     ResponseEntity<Void> delete(@PathVariable long id) {

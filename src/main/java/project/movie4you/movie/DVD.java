@@ -24,4 +24,5 @@ public class DVD {
     public void update(Status status) {
         this.status = status;
     }
+
 }
