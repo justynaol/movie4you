@@ -32,7 +32,7 @@ public class MovieEndpoint {
 
    @PostMapping
     public ResponseEntity<Void> create(@RequestBody MovieDefinition movieDefinition) {
-       Movie movie = new Movie(movieDefinition.id, movieDefinition.title, movieDefinition.director, movieDefinition.scriptwriter,
+       Movie movie = new Movie(movieDefinition.title, movieDefinition.director, movieDefinition.scriptwriter,
                movieDefinition.price, movieDefinition.status, movieDefinition.yearOfProduction, movieDefinition.category,
                movieDefinition.description);
         movieRepository.save(movie);
@@ -84,7 +84,6 @@ public class MovieEndpoint {
 
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     public static class MovieDefinition {
-        long id;
         String title;
         String director;
         String scriptwriter;
@@ -97,7 +96,6 @@ public class MovieEndpoint {
 
         public static MovieDefinition from(Movie movie) {
             MovieDefinition movieDefinition = new MovieDefinition();
-            movieDefinition.id = movie.getId();
             movieDefinition.title = movie.getTitle();
             movieDefinition.director = movie.getDirector();
             movieDefinition.scriptwriter = movie.getScriptwriter();

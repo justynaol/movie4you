@@ -14,6 +14,7 @@ public class Movie {
     private String director;
     private String scriptwriter;
     private float price;
+    @Enumerated(EnumType.STRING)
     private Status status;
     private int yearOfProduction;
     private String category;
@@ -22,8 +23,7 @@ public class Movie {
     @JoinTable(name = "Award_Movie")
     private List<Award> awards = new ArrayList<>();
 
-    public Movie(long id, String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description) {
-        this.id = id;
+    public Movie(String title, String director, String scriptwriter, float price, Status status, int yearOfProduction, String category, String description) {
         this.title = title;
         this.director = director;
         this.scriptwriter = scriptwriter;

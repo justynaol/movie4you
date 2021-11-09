@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/user","/movie","/v2/api-docs").permitAll()
+                .antMatchers("/user","/movie","/v2/api-docs","/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()

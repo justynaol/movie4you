@@ -10,6 +10,7 @@ public class DVD {
     private long id;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     private Movie movie;
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     public DVD(Movie movie, Status status) {
